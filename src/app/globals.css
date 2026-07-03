@@ -1,12 +1,83 @@
 @import "tailwindcss";
 @plugin "@tailwindcss/typography";
 
+:root {
+  --paper: #f1eee6;
+  --paper-raised: #f8f6f0;
+  --ink: #1c1b18;
+  --ink-soft: #5b564c;
+  --ink-faint: #8a8478;
+  --accent: #2f6f5e;
+  --accent-deep: #1f4a3e;
+  --accent-tint: #dfe9e3;
+  --rule: #dad5c8;
+}
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-  --font-serif: Georgia, "Songti SC", "SimSun", serif;
+  --font-serif: Georgia, "Iowan Old Style", "Songti SC", "SimSun", serif;
+  --color-paper: var(--paper);
+  --color-paper-raised: var(--paper-raised);
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-accent: var(--accent);
+  --color-accent-deep: var(--accent-deep);
+  --color-accent-tint: var(--accent-tint);
+  --color-rule: var(--rule);
 }
 
 body {
   font-family: var(--font-sans);
+  background: var(--paper);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.prose {
+  --tw-prose-body: var(--ink);
+  --tw-prose-headings: var(--ink);
+  --tw-prose-bold: var(--accent-deep);
+  --tw-prose-links: var(--accent-deep);
+  --tw-prose-quotes: var(--ink);
+  --tw-prose-quote-borders: var(--accent-deep);
+  --tw-prose-hr: var(--rule);
+}
+
+.prose blockquote {
+  background: var(--accent-tint);
+  border-left-color: var(--accent-deep);
+  border-radius: 8px;
+  padding: 14px 18px;
+  font-style: normal;
+  font-size: 0.9em;
+  color: var(--accent-deep);
+}
+
+.prose blockquote p {
+  margin: 0;
+}
+
+.prose h2 {
+  border-left: 3px solid var(--accent);
+  padding-left: 14px;
+  font-style: italic;
+  color: var(--accent-deep);
+}
+
+.prose hr {
+  border-color: var(--rule);
+}
+
+.prose strong {
+  color: var(--accent-deep);
 }

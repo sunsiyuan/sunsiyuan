@@ -28,22 +28,28 @@ export default function RootLayout({
       lang="zh-CN"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-[#f5f3ee] text-[#1c1b18]">
-        <header className="border-b border-black/10">
-          <div className="max-w-2xl mx-auto px-6 py-6 flex items-center justify-between">
-            <Link href="/" className="font-serif text-lg tracking-tight">
+      <body className="min-h-full flex flex-col">
+        <header style={{ borderBottom: "1px solid var(--rule)" }}>
+          <div className="max-w-2xl mx-auto px-6 py-8 flex items-center justify-between">
+            <Link href="/" className="font-serif text-xl tracking-tight">
               孙思远
             </Link>
-            <nav className="text-sm text-black/60 space-x-4">
-              <Link href="/" className="hover:text-black">
+            <nav
+              className="eyebrow space-x-4"
+              style={{ color: "var(--ink-faint)" }}
+            >
+              <Link href="/" className="hover:underline">
                 文章
               </Link>
             </nav>
           </div>
         </header>
         <main className="flex-1">{children}</main>
-        <footer className="border-t border-black/10 mt-16">
-          <div className="max-w-2xl mx-auto px-6 py-8 text-xs text-black/40">
+        <footer style={{ borderTop: "1px solid var(--rule)", marginTop: 64 }}>
+          <div
+            className="max-w-2xl mx-auto px-6 py-8 eyebrow"
+            style={{ color: "var(--ink-faint)" }}
+          >
             © {new Date().getFullYear()} 孙思远
           </div>
         </footer>
