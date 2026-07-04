@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getAllSlugs, getPostBySlug } from "@/lib/posts";
 import InterviewBody from "@/components/InterviewBody";
+import Subscribe from "@/components/Subscribe";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
@@ -73,6 +74,9 @@ export default async function PostPage({
         </p>
       </header>
       <InterviewBody markdown={post!.content} />
+      <div className="mt-16">
+        <Subscribe />
+      </div>
     </article>
   );
 }

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
 import "./globals.css";
 
 // 首屏渲染前同步定好主题，避免刷新时先闪一下浅色（no-flash）。
@@ -18,22 +19,27 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const SITE_NAME = "孙思远 / Miles Sun";
-const SITE_DESCRIPTION = "孙思远的个人网站——博客、播客文字版与一些不成熟的想法。";
-
 export const metadata: Metadata = {
-  metadataBase: new URL("https://sunsiyuan.xyz"),
+  metadataBase: new URL(SITE_URL),
   title: {
     default: SITE_NAME,
     template: "%s · 孙思远",
   },
   description: SITE_DESCRIPTION,
-  authors: [{ name: "孙思远", url: "https://sunsiyuan.xyz" }],
+  authors: [{ name: "孙思远", url: SITE_URL }],
   creator: "孙思远",
+  alternates: {
+    canonical: "/",
+    types: {
+      // 让浏览器/阅读器自动发现订阅源
+      "application/rss+xml": [{ url: "/feed.xml", title: SITE_NAME }],
+      "application/feed+json": [{ url: "/feed.json", title: SITE_NAME }],
+    },
+  },
   openGraph: {
     type: "website",
     locale: "zh_CN",
-    url: "https://sunsiyuan.xyz",
+    url: SITE_URL,
     siteName: SITE_NAME,
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
@@ -77,10 +83,24 @@ export default function RootLayout({
         <main className="flex-1">{children}</main>
         <footer style={{ borderTop: "1px solid var(--rule)", marginTop: 64 }}>
           <div
-            className="max-w-2xl mx-auto px-6 py-8 eyebrow"
+            className="max-w-2xl mx-auto px-6 py-8 eyebrow flex flex-wrap items-center justify-between gap-4"
             style={{ color: "var(--ink-faint)" }}
           >
-            © {new Date().getFullYear()} 孙思远
+            <span>© {new Date().getFullYear()} 孙思远</span>
+            <span className="flex items-center gap-4">
+              <span aria-hidden="true" style={{ textTransform: "none" }}>
+                订阅
+              </span>
+              <a href="/feed.xml" className="hover:underline">
+                RSS
+              </a>
+              <a href="/feed.json" className="hover:underline">
+                JSON
+              </a>
+              <a href="/llms.txt" className="hover:underline">
+                llms.txt
+              </a>
+            </span>
           </div>
         </footer>
       </body>
