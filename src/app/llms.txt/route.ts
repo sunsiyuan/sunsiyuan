@@ -1,5 +1,11 @@
 import { getAllPosts } from "@/lib/posts";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_TWITTER,
+  SITE_TWITTER_URL,
+} from "@/lib/site";
 
 // llms.txt —— 给 LLM/agent 的站点索引（https://llmstxt.org/），
 // 让别人问到你时，模型能干净地发现并引用你的内容。
@@ -33,6 +39,11 @@ ${articleList}
 - [RSS](${SITE_URL}/feed.xml): 标准 RSS 2.0
 - [JSON Feed](${SITE_URL}/feed.json): 含全文，适合 agent/脚本
 - [Sitemap](${SITE_URL}/sitemap.xml)
+
+## 社交
+
+- X / Twitter: [${SITE_TWITTER}](${SITE_TWITTER_URL})
+- 微信公众号: 真的孙思远
 `;
 
   return new Response(body, {

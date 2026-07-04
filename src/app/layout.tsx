@@ -2,7 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import ThemeToggle from "@/components/ThemeToggle";
-import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from "@/lib/site";
+import {
+  SITE_URL,
+  SITE_NAME,
+  SITE_DESCRIPTION,
+  SITE_TWITTER,
+  SITE_TWITTER_URL,
+} from "@/lib/site";
 import "./globals.css";
 
 // 首屏渲染前同步定好主题，避免刷新时先闪一下浅色（no-flash）。
@@ -46,6 +52,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
+    site: SITE_TWITTER,
+    creator: SITE_TWITTER,
     title: SITE_NAME,
     description: SITE_DESCRIPTION,
   },
@@ -86,7 +94,18 @@ export default function RootLayout({
             className="max-w-2xl mx-auto px-6 py-8 eyebrow flex flex-wrap items-center justify-between gap-4"
             style={{ color: "var(--ink-faint)" }}
           >
-            <span>© {new Date().getFullYear()} 孙思远</span>
+            <span className="flex items-center gap-3">
+              <span>© {new Date().getFullYear()} 孙思远</span>
+              <a
+                href={SITE_TWITTER_URL}
+                target="_blank"
+                rel="me noopener noreferrer"
+                className="hover:underline"
+                aria-label={`X（${SITE_TWITTER}）`}
+              >
+                X
+              </a>
+            </span>
             <span className="flex items-center gap-4">
               <span aria-hidden="true" style={{ textTransform: "none" }}>
                 订阅
