@@ -2,6 +2,7 @@
 @plugin "@tailwindcss/typography";
 
 :root {
+  color-scheme: light;
   --paper: #f1eee6;
   --paper-raised: #f8f6f0;
   --ink: #1c1b18;
@@ -11,6 +12,43 @@
   --accent-deep: #1f4a3e;
   --accent-tint: #dfe9e3;
   --rule: #dad5c8;
+  /* 访谈体主持人（孙哥）色块——原本硬编码在 InterviewBody.tsx，提成变量以支持暗色 */
+  --host-bg: #f3e9dd;
+  --host-ink: #6b4a2f;
+}
+
+/* 夜间纸 · 炭灰夜（方案 C）。中性炭灰打底，保留一点暖，绿色相应提亮。 */
+/* 未手动切换时跟随系统偏好；InterviewBody 等全站元素都走上面的 CSS 变量，自动响应。 */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --paper: #16171a;
+    --paper-raised: #1f2124;
+    --ink: #e9e9ec;
+    --ink-soft: #a7a9af;
+    --ink-faint: #74767c;
+    --accent: #55b6a0;
+    --accent-deep: #86d4bf;
+    --accent-tint: #1d2a28;
+    --rule: #2e3035;
+    --host-bg: #221f1b;
+    --host-ink: #cdae86;
+  }
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #16171a;
+  --paper-raised: #1f2124;
+  --ink: #e9e9ec;
+  --ink-soft: #a7a9af;
+  --ink-faint: #74767c;
+  --accent: #55b6a0;
+  --accent-deep: #86d4bf;
+  --accent-tint: #1d2a28;
+  --rule: #2e3035;
+  --host-bg: #221f1b;
+  --host-ink: #cdae86;
 }
 
 @theme inline {
@@ -26,6 +64,10 @@
   --color-accent-deep: var(--accent-deep);
   --color-accent-tint: var(--accent-tint);
   --color-rule: var(--rule);
+}
+
+html {
+  background: var(--paper);
 }
 
 body {

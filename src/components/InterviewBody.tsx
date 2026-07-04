@@ -22,7 +22,7 @@ type Turn = { speaker: string; paragraphs: string[] };
 
 function renderTurn(turn: Turn, key: React.Key) {
   const avatar = isAvatarSpeaker(turn.speaker);
-  const labelColor = avatar ? "var(--accent-deep)" : "#6b4a2f";
+  const labelColor = avatar ? "var(--accent-deep)" : "var(--host-ink)";
   return (
     <div
       key={key}
@@ -30,7 +30,7 @@ function renderTurn(turn: Turn, key: React.Key) {
       style={
         avatar
           ? { background: "var(--paper-raised)" }
-          : { background: "#f3e9dd" }
+          : { background: "var(--host-bg)" }
       }
     >
       {turn.paragraphs.map((p, i) => (

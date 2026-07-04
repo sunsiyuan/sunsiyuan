@@ -1,9 +1,44 @@
+import type { Metadata } from "next";
 import { getAllSlugs, getPostBySlug } from "@/lib/posts";
 import InterviewBody from "@/components/InterviewBody";
 import { notFound } from "next/navigation";
 
 export function generateStaticParams() {
   return getAllSlugs().map((slug) => ({ slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>;
+}): Promise<Metadata> {
+  const { slug } = await params;
+
+  let post;
+  try {
+    post = getPostBySlug(slug);
+  } catch {
+    return {};
+  }
+
+  return {
+    title: post.title,
+    description: post.description,
+    keywords: post.tags,
+    openGraph: {
+      type: "article",
+      title: post.title,
+      description: post.description,
+      url: `https://sunsiyuan.xyz/posts/${slug}`,
+      publishedTime: post.date || undefined,
+      tags: post.tags,
+    },
+    twitter: {
+      card: "summary",
+      title: post.title,
+      description: post.description,
+    },
+  };
 }
 
 export default async function PostPage({
