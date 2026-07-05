@@ -3,6 +3,8 @@ title: "我对纳瓦尔的数字分身，做了一次专访"
 date: "2026-07-03"
 description: "杠杆与自我矛盾——把纳瓦尔·拉维坎特的杠杆理论，回过头问在了他自己身上。"
 tags: ["Vibe Podcast", "AI", "纳瓦尔"]
+audio: "https://clpjm9yukt3csyyw.public.blob.vercel-storage.com/audio/naval-ep1.mp3"
+audioDuration: "43:53"
 ---
 
 > 本文对话内容由AI数字分身生成，不代表本人真实观点。这是「孙哥火星殖民计划」Vibe Podcast系列的第一期文字版。

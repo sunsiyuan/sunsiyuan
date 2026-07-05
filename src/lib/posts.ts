@@ -10,6 +10,8 @@ export type PostMeta = {
   date: string;
   description: string;
   tags: string[];
+  audio?: string;
+  audioDuration?: string;
 };
 
 export type Post = PostMeta & {
@@ -34,6 +36,8 @@ export function getPostBySlug(slug: string): Post {
     date: data.date ?? "",
     description: data.description ?? "",
     tags: data.tags ?? [],
+    audio: data.audio ?? undefined,
+    audioDuration: data.audioDuration ?? undefined,
     content,
   };
 }
