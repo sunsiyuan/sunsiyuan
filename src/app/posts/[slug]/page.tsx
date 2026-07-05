@@ -79,7 +79,7 @@ export default async function PostPage({
       )}
       <InterviewBody markdown={post!.content} />
       <div className="mt-16">
-        <Subscribe podcastCard={post!.podcastCard} podcastUrl={post!.podcastUrl} />
+        <Subscribe podcastQr={post!.podcastQr} podcastUrl={post!.podcastUrl} />
       </div>
     </article>
   );

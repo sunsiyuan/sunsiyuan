@@ -12,7 +12,7 @@ export type PostMeta = {
   tags: string[];
   audio?: string;
   audioDuration?: string;
-  podcastCard?: string;
+  podcastQr?: string;
   podcastUrl?: string;
 };
 
@@ -40,7 +40,7 @@ export function getPostBySlug(slug: string): Post {
     tags: data.tags ?? [],
     audio: data.audio ?? undefined,
     audioDuration: data.audioDuration ?? undefined,
-    podcastCard: data.podcastCard ?? undefined,
+    podcastQr: data.podcastQr ?? undefined,
     podcastUrl: data.podcastUrl ?? undefined,
     content,
   };
