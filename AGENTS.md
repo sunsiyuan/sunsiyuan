@@ -23,10 +23,24 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - `## "标题文字"`会被渲染成分节标题（金句标题，见`prompts/article_writing.md`在vibe-podcast repo里的方法论）
 - `> `引用块渲染成绿色调的disclosure提示框（专门给强制披露文本用的）
 - `*披露：...*`（斜体，通常是文末的披露声明）渲染成小字灰色提示
+- 行内语法只支持`**粗体**`和`[文字](链接)`——这是一个手写的正则解析器，不是完整markdown实现，别的行内语法（斜体`*x*`、行内代码、图片`![]()`）目前都不支持，会被当成纯文本原样显示。2026-07-06踩过这个坑：文章里写了`[这里](url)`链接，上线后发现整段方括号和圆括号原样显示成文字——因为`renderInline()`一开始只处理了`**bold**`。加新的行内语法之前，先确认`InterviewBody.tsx`的`renderInline()`函数是不是已经支持，不要假设标准markdown语法会自动生效。
 
 **如果发言人名字不是"孙哥"，会被当成"嘉宾"样式（绿色调），"孙哥"固定是"主持人"样式（棕色调）**——这个判断逻辑写在`InterviewBody.tsx`的`HOST_NAMES`里，以后如果孙哥这个节目品牌改名或者出现别的主持人，要改这个集合。
 
 **后果**：往`src/content/posts/`加新文章时，正文必须严格遵守这个格式，不能随便用其他markdown写法写对话（比如不能用列表、不能用普通的"发言人:"半角冒号）。如果某篇内容不是访谈体（比如纯个人随笔），`InterviewBody`也能兼容渲染成普通段落——不匹配`**X：**`格式的段落会走"叙事段落"分支，正常渲染，不会报错。
+
+---
+
+## 音频播放器 & 存储（Naval第一期确定下来的方案）
+
+文章可以嵌入播客音频，走`AudioPlayer`组件（`src/components/AudioPlayer.tsx`），不是简单的原生`<audio controls>`——原生控件样式没法跟站点视觉系统对齐，所以手写了一个小组件（播放/暂停按钮+进度条+时间显示，全部用站点自己的CSS变量）。frontmatter里加`audio: "<url>"`（可选`audioDuration: "mm:ss"`当元数据还没加载出来时的占位显示），`page.tsx`会自动在文章顶部渲染播放器。
+
+**音频文件存哪**：用Vercel Blob（`@vercel/blob`），不要提交进这个repo的git仓库，也不要依赖播客平台自己的CDN链接：
+- 提交进git会让仓库随着嘉宾增多不断变大，拖慢git操作——这个考量跟`vibe-podcast`那边`.gitignore`掉`guests/*/content/podcast/audio/`是同一个原因
+- 小宇宙等播客平台的CDN链接可能带生命周期过期时间（实测小宇宙的`media.xyzcdn.net`链接header里有`x-oss-expiration`，大概两个月后过期），拿来做站内永久播放器的音源不安全
+- 上传方法：`vercel blob put <本地文件路径> --pathname "audio/<slug>.mp3" --rw-token "$BLOB_READ_WRITE_TOKEN" --access public`（`BLOB_READ_WRITE_TOKEN`在`.env.local`里，是链接Blob store之后自动写入的）。Blob store（`sunsiyuan-media`）已经创建并链接到这个Vercel项目，不需要重新建。
+
+**播客平台关注卡片**：`Subscribe`组件（`src/components/Subscribe.tsx`）支持一个可选的`podcastQr`/`podcastUrl`prop，跟已有的微信公众号二维码卡片并排展示（`QrCard`是两者共用的展示组件）。截图/分享图不要直接整张嵌进去用——2026-07-06踩过坑，小宇宙的分享卡片是渐变紫蓝+插画风格，跟站点的暖纸极简风格"格格不入"，正确做法是从分享图里裁出纯二维码部分（用`PIL`按非白像素做tight bounding box，再按目标尺寸配上跟现有二维码同比例的留白，不要凭感觉裁——两张二维码在同一尺寸下视觉密度不一致会很明显），用站点自己的排版包一层。
 
 ---
 
