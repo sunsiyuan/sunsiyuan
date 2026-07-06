@@ -1,0 +1,39 @@
+/* 小红书封面（750×1000）· 暖纸风，跟站点视觉一致。
+   色板取自 src/app/globals.css：
+   暖纸 #f1eee6 / 墨 #1c1b18 / 次墨 #5b564c / 淡墨 #8a8478 / 绿 #2f6f5e / 线 #dad5c8 */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { width: 750px; height: 1000px; overflow: hidden; }
+
+.card {
+  width: 750px; height: 1000px;
+  background: #f1eee6;
+  background-image: radial-gradient(rgba(40, 30, 20, 0.045) 1px, transparent 1px);
+  background-size: 6px 6px;
+  position: relative;
+  display: flex; flex-direction: column; justify-content: center;
+  padding: 76px 60px;
+  font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+}
+
+/* eyebrow：绿边条 + 小标签 */
+.eyebrow { display: flex; align-items: center; gap: 15px; margin-bottom: 40px; }
+.eyebrow .bar { width: 5px; height: 30px; background: #2f6f5e; border-radius: 2px; }
+.eyebrow .label { font-size: 26px; color: #5b564c; letter-spacing: 4px; }
+
+/* 巨字标题：serif 暖墨，.accent 绿色高亮关键字 */
+.title {
+  font-family: Georgia, "Iowan Old Style", "Songti SC", "SimSun", serif;
+  font-size: 104px; font-weight: 700; color: #1c1b18;
+  line-height: 1.1; letter-spacing: 2px;
+}
+.title .accent { color: #2f6f5e; }
+
+.rule { width: 84px; height: 2px; background: #dad5c8; margin: 46px 0 34px; }
+
+.subtitle { font-size: 40px; color: #5b564c; line-height: 1.5; }
+
+.footer {
+  position: absolute; left: 60px; bottom: 58px;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 24px; color: #8a8478; letter-spacing: 1px;
+}

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh"><head><meta charset="UTF-8">
+<style>
+  /* 微信公众号封面 · 1:1 方版（1080×1080）· 暖纸风
+     内容聚成一整块居中：公众号会从中间横切 2.35:1，聚拢后横切也抓得住核心 */
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { width: 1080px; height: 1080px; overflow: hidden; }
+  .card {
+    width: 1080px; height: 1080px;
+    background: #f1eee6;
+    background-image: radial-gradient(rgba(40,30,20,0.045) 1px, transparent 1px);
+    background-size: 7px 7px;
+    display: flex; flex-direction: column; justify-content: center;
+    padding: 0 88px;
+    font-family: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+  }
+  .eyebrow { display: flex; align-items: center; gap: 15px; margin-bottom: 24px; }
+  .eyebrow .bar { width: 6px; height: 30px; background: #2f6f5e; border-radius: 2px; }
+  .eyebrow .label { font-size: 28px; color: #5b564c; letter-spacing: 5px; }
+  .title {
+    font-family: Georgia, "Iowan Old Style", "Songti SC", "SimSun", serif;
+    font-size: 116px; font-weight: 700; color: #1c1b18;
+    line-height: 1.08; letter-spacing: 2px;
+  }
+  .title .accent { color: #2f6f5e; }
+  .rule { width: 84px; height: 3px; background: #dad5c8; margin: 26px 0 22px; }
+  .subtitle { font-size: 42px; color: #5b564c; line-height: 1.4; }
+  .footer {
+    margin-top: 32px;
+    font-family: ui-monospace, "SF Mono", Menlo, monospace;
+    font-size: 26px; color: #8a8478; letter-spacing: 1px;
+  }
+</style></head>
+<body>
+  <div class="card">
+    <div class="eyebrow"><span class="bar"></span><span class="label">复盘 · 随笔</span></div>
+    <div class="title">服务器<span class="accent">被黑</span><br>那天早上</div>
+    <div class="rule"></div>
+    <div class="subtitle">没有 vibe coding，<br>我根本扛不下来运维</div>
+    <div class="footer">孙思远 · sunsiyuan.xyz</div>
+  </div>
+</body></html>

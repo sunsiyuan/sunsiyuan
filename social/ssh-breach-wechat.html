@@ -1,0 +1,36 @@
+<!doctype html>
+<html><head><meta charset="utf-8"></head>
+<body style="background:#f1eee6;padding:24px;max-width:640px;margin:0 auto;font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;">
+<p style="margin:0;padding:0;">&nbsp;</p>
+<blockquote style="font-family:Georgia, 'Iowan Old Style', 'Songti SC', 'SimSun', serif;font-style:italic;font-size:18px;line-height:1.65;color:#5b564c;border-left:3px solid #2f6f5e;padding-left:16px;margin:0 0 26px 0;">复盘记录一下 5 月 14 日服务器被黑事件——没有 vibe coding 真就完全做不来运维。</blockquote>
+<hr style="border:none;border-top:1px solid #dad5c8;width:40px;margin:26px auto;" />
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">10:19</span><br><span style="line-height:1.8;">火山短信告警——北京机房那台服务器被人暴力破解、密码撞对了，登进来了。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">10:20</span><br><span style="line-height:1.8;">止血：</span></p>
+<ol style="font-size:15.5px;line-height:1.8;color:#1c1b18;padding-left:24px;margin:0 0 20px 0;"><li style="margin:0 0 6px 0;">第一时间冲去各个后台，把所有能连到我钱的密钥全删了——最怕的是 gemini 那把，它当时连个消费上限都设不了，一旦泄露别人拿去刷，账单没有天花板</li><li style="margin:0 0 6px 0;">打开 claude，剩下的一步步照它说的做</li><li style="margin:0 0 6px 0;">改防火墙：只放我自己进来，也堵死这台机器往外连（不然它会被人拿去攻击别人）</li><li style="margin:0 0 6px 0;">关掉广州那两台</li></ol>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">微信通知客户停机维护，可能持续到下午</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">然后就是 claude 全程表演，（说实话我也不知道他在做什么），平时部署、查日志都是 claude 做的，所以运维交个 AI 完全放心<br>我唯一的工作就是和 claude 确认要做什么、做到哪了、有什么风险要我拍板<br>我看它取证的结论大概是——<br>这台机器被装了一整套：改了登录、让我敲命令看到的都是假的、还挂了个程序拿我机器去攻击别人、留了好几个后门。具体我也看不太懂，反正挺专业的。</p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">11:00–11:20</span><br><span style="line-height:1.8;">把删掉的密钥重新生成、换上新的。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">备份（并行）</span><br><span style="line-height:1.8;">顺手给整台机器拍了个快照存证（留着攻击者装的那套东西，也当数据兜底，存一个月就几块钱）。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">11:20</span><br><span style="line-height:1.8;">把业务数据打包备份出来，校验一遍确认完整。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">11:25</span><br><span style="line-height:1.8;">系统整个重装，数据留着——被装了后门的机器，重装最干净。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">11:35–11:56</span><br><span style="line-height:1.8;">装回数据，把服务重新跑起来。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">14:28</span><br><span style="line-height:1.8;">清理配置，删掉没用的、换掉该换的。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">15:00</span><br><span style="line-height:1.8;">客户那边验证一切正常。</span></p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">16:00–17:30</span><br><span style="line-height:1.8;">彻底加固：手上 7 台机器全部改成走一张私有内网连，公网入口全关死，登录只认密钥、不再用密码。</span></p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">总停服大概 6 小时，客户侧使用恢复。</p>
+<p style="margin:0 0 20px 0;font-size:15.5px;color:#1c1b18;"><span style="color:#2f6f5e;line-height:1.5;">加固之后（时间记不清了）</span><br><span style="line-height:1.8;">翻了后台的操作记录，看攻击者这几个小时到底干了什么。结果有点意外——除了把我这台机器当肉鸡、拿去打别人，它别的啥都没干。没动数据，没碰业务，那把我最担心的、没上限的 gemini key 也没来得及用。它从头到尾要的，就是一台能对外攻击的机器。</span></p>
+<hr style="border:none;border-top:1px solid #dad5c8;width:40px;margin:26px auto;" />
+<h2 style="font-family:Georgia, 'Iowan Old Style', 'Songti SC', 'SimSun', serif;font-weight:600;font-size:21px;line-height:1.35;margin:26px 0 14px 0;color:#1c1b18;">复盘</h2>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;"><strong>一，服务器开着公网、还能用密码登录。</strong></p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">密码不安全我是知道的，但没想到这么不安全。机器人一口气试几百上千次，直接被撞开。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;"><strong>二，Google AI 能力太落后，没有做好企业级基建</strong></p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">gemini 连个消费上限都设不了，只能拿信用卡额度硬卡。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">后来改的：</p>
+<ol style="font-size:15.5px;line-height:1.8;color:#1c1b18;padding-left:24px;margin:0 0 20px 0;"><li style="margin:0 0 6px 0;">服务器全改成只认密钥、走内网连，公网入口关死，"猜密码"这回事直接没了。</li><li style="margin:0 0 6px 0;">事后直接抛弃 gemini，换别家。</li><li style="margin:0 0 6px 0;">把整个处理过程记成一份手册，下次照着做；顺手也写了套给人开权限的规矩。</li></ol>
+<hr style="border:none;border-top:1px solid #dad5c8;width:40px;margin:26px auto;" />
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">复盘就这些。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">早期我精力几乎全压业务上，先收钱、先让用户用，安全一直排在"以后再说"。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">这次被黑，导火索是前一天那次服务器迁移。那阵子用户涨得快，原来的机器扛不住、一到高峰就崩，得换台更大的；顺手也把服务器从广州搬到北京机房（豆包的算力在那走内网、更便宜），大机器还能多跑几条并行。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">这活是半夜赶的，00:37 动手、03:45 收尾，全程 claude 操作，弄完我就去睡了。新机器就这么上线了，还开着公网、还能用密码登录——几个小时后就被撞开。等我早上醒来，第一眼看到的就是那条被黑的短信。</p>
+<p style="font-size:15.5px;line-height:1.8;color:#1c1b18;margin:0 0 20px 0;">从机器扛不住、扩容、搬机房，到当天被黑、清理重装加固——这一长串折腾下来，最大的体感就是：运维真是个重活，没有 vibe coding 我根本干不了（也干不来）。各家云厂商的后台还都特别难用。</p>
+</body></html>
