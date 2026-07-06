@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
+import Script from "next/script";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   SITE_URL,
@@ -122,6 +123,12 @@ export default function RootLayout({
             </span>
           </div>
         </footer>
+        {/* Cloudflare Web Analytics（灰云 DNS-only，必须手动注入 beacon） */}
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon='{"token": "0cb386a70734487e94138b96e63a38ef"}'
+        />
       </body>
     </html>
   );
