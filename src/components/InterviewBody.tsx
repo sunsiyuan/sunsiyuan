@@ -1,11 +1,29 @@
 import React from "react";
 
-// Renders **text** as <strong> and [text](url) as <a>, leaves everything else as plain text.
+// Renders **text** as <strong>, `text` as inline <code>, and [text](url) as <a>,
+// leaves everything else as plain text.
 function renderInline(text: string): React.ReactNode[] {
-  const parts = text.split(/(\*\*[^*]+\*\*|\[[^\]]+\]\([^)]+\))/g);
+  const parts = text.split(/(\*\*[^*]+\*\*|`[^`]+`|\[[^\]]+\]\([^)]+\))/g);
   return parts.map((part, i) => {
     if (part.startsWith("**") && part.endsWith("**")) {
       return <strong key={i}>{part.slice(2, -2)}</strong>;
+    }
+    if (part.startsWith("`") && part.endsWith("`") && part.length > 1) {
+      return (
+        <code
+          key={i}
+          className="font-mono"
+          style={{
+            fontSize: "0.86em",
+            background: "var(--paper-raised)",
+            color: "var(--ink-soft)",
+            padding: "0.1em 0.35em",
+            borderRadius: 4,
+          }}
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
     }
     const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
     if (linkMatch) {
@@ -75,11 +93,53 @@ function renderTurn(turn: Turn, key: React.Key) {
   );
 }
 
-export default function InterviewBody({ markdown }: { markdown: string }) {
-  const blocks = markdown
-    .split(/\n\n+/)
-    .map((b) => b.trim())
-    .filter(Boolean);
+// Split into blocks on blank lines, but keep ```fenced``` regions intact
+// (a code block may itself contain blank lines).
+function splitBlocks(markdown: string): string[] {
+  const lines = markdown.split("\n");
+  const blocks: string[] = [];
+  let buf: string[] = [];
+  const flushBuf = () => {
+    buf
+      .join("\n")
+      .split(/\n\n+/)
+      .map((b) => b.trim())
+      .filter(Boolean)
+      .forEach((b) => blocks.push(b));
+    buf = [];
+  };
+  let i = 0;
+  while (i < lines.length) {
+    if (lines[i].trimStart().startsWith("```")) {
+      flushBuf();
+      const code = [lines[i]];
+      i++;
+      while (i < lines.length && !lines[i].trimStart().startsWith("```")) {
+        code.push(lines[i]);
+        i++;
+      }
+      if (i < lines.length) {
+        code.push(lines[i]); // closing fence
+        i++;
+      }
+      blocks.push(code.join("\n"));
+    } else {
+      buf.push(lines[i]);
+      i++;
+    }
+  }
+  flushBuf();
+  return blocks;
+}
+
+export default function InterviewBody({
+  markdown,
+  format = "interview",
+}: {
+  markdown: string;
+  format?: "interview" | "essay";
+}) {
+  const blocks = splitBlocks(markdown);
 
   const elements: React.ReactNode[] = [];
   let currentTurn: Turn | null = null;
@@ -94,15 +154,74 @@ export default function InterviewBody({ markdown }: { markdown: string }) {
   blocks.forEach((block, i) => {
     if (block === "---") {
       flush(`flush-${i}`);
+      if (format === "essay") {
+        // 随笔体：轻分隔，一小截居中细线，不用整条大分割线
+        elements.push(
+          <hr
+            key={i}
+            style={{
+              width: 40,
+              margin: "26px auto",
+              border: "none",
+              borderTop: "1px solid var(--rule)",
+            }}
+          />
+        );
+        return;
+      }
       elements.push(
         <hr key={i} className="my-10" style={{ borderColor: "var(--rule)" }} />
       );
       return;
     }
 
+    if (block.startsWith("```")) {
+      flush(`flush-${i}`);
+      const code = block
+        .replace(/^```[^\n]*\n?/, "")
+        .replace(/\n?```\s*$/, "");
+      elements.push(
+        <pre
+          key={i}
+          className="font-mono rounded-lg px-4 py-3 mb-6 overflow-x-auto"
+          style={{
+            fontSize: 13,
+            lineHeight: 1.6,
+            background: "var(--paper-raised)",
+            border: "1px solid var(--rule)",
+            color: "var(--ink-soft)",
+          }}
+        >
+          <code>{code}</code>
+        </pre>
+      );
+      return;
+    }
+
     if (block.startsWith("## ")) {
       flush(`flush-${i}`);
-      const title = block.replace(/^##\s*/, "").replace(/^"(.*)"$/, "$1");
+      const raw = block.replace(/^##\s*/, "");
+      if (format === "essay") {
+        // 随笔体：干净小标题，正体不斜、无引号无边框
+        elements.push(
+          <h2
+            key={i}
+            className="font-serif"
+            style={{
+              fontSize: 21,
+              fontWeight: 600,
+              lineHeight: 1.35,
+              margin: "24px 0 14px",
+              color: "var(--ink)",
+            }}
+          >
+            {renderInline(raw)}
+          </h2>
+        );
+        return;
+      }
+      // 访谈体：金句样式（serif 斜体 + 引号 + 绿边框）
+      const title = raw.replace(/^"(.*)"$/, "$1");
       elements.push(
         <h2
           key={i}
@@ -124,6 +243,25 @@ export default function InterviewBody({ markdown }: { markdown: string }) {
     if (block.startsWith("> ")) {
       flush(`flush-${i}`);
       const text = block.replace(/^>\s*/gm, "");
+      if (format === "essay") {
+        // 随笔体：引用样式（副标题 / 题记 / 文中引用），serif 斜体 + 左边框
+        elements.push(
+          <blockquote
+            key={i}
+            className="font-serif italic pl-4 mb-8"
+            style={{
+              fontSize: 18,
+              lineHeight: 1.65,
+              color: "var(--ink-soft)",
+              borderLeft: "3px solid var(--accent)",
+            }}
+          >
+            {renderInline(text)}
+          </blockquote>
+        );
+        return;
+      }
+      // 访谈体：绿色披露提示框
       elements.push(
         <div
           key={i}
@@ -151,6 +289,36 @@ export default function InterviewBody({ markdown }: { markdown: string }) {
       return;
     }
 
+    // List block: every line is "- x" / "* x" (unordered) or "1. x" / "1 x" (ordered).
+    {
+      const rows = block.split("\n").map((l) => l.trim()).filter(Boolean);
+      const isUL = rows.length >= 1 && rows.every((l) => /^[-*]\s+/.test(l));
+      const isOL = rows.length >= 2 && rows.every((l) => /^\d+[.、]?\s+/.test(l));
+      if (isUL || isOL) {
+        flush(`flush-${i}`);
+        const items = rows.map((l) => l.replace(/^([-*]|\d+[.、]?)\s+/, ""));
+        const ListTag = isOL ? "ol" : "ul";
+        elements.push(
+          <ListTag
+            key={i}
+            className="text-[15.5px] mb-6 pl-6"
+            style={{
+              lineHeight: 1.8,
+              color: "var(--ink)",
+              listStyleType: isOL ? "decimal" : "disc",
+            }}
+          >
+            {items.map((it, j) => (
+              <li key={j} style={{ marginBottom: 6 }}>
+                {renderInline(it)}
+              </li>
+            ))}
+          </ListTag>
+        );
+        return;
+      }
+    }
+
     const match = block.match(TURN_RE);
     if (match) {
       flush(`flush-${i}`);
@@ -165,13 +333,54 @@ export default function InterviewBody({ markdown }: { markdown: string }) {
     }
 
     // Plain narrative paragraph (intro copy, etc.) — only reachable outside a turn.
+    // Single newlines inside a paragraph become <br> so the author's own line
+    // breaks survive (this renderer is tuned to one writer's raw multi-line style).
+    const lines = block.split("\n");
+
+    // Essay "labeled block": first line is a bold label (e.g. a timestamp),
+    // rest is the body. Keeps the label tight above its content so a timeline
+    // reads as label+body units instead of two evenly-spaced lines.
+    if (
+      format === "essay" &&
+      lines.length >= 2 &&
+      /^\*\*[^*]+\*\*/.test(lines[0].trim())
+    ) {
+      elements.push(
+        <div key={i} className="text-[15.5px] mb-6" style={{ color: "var(--ink)" }}>
+          <div
+            style={{
+              lineHeight: 1.5,
+              marginBottom: 3,
+              color: "var(--accent)",
+            }}
+          >
+            {renderInline(lines[0].replace(/\*\*/g, ""))}
+          </div>
+          <div style={{ lineHeight: 1.8 }}>
+            {lines.slice(1).map((line, k, arr) => (
+              <React.Fragment key={k}>
+                {renderInline(line)}
+                {k < arr.length - 1 && <br />}
+              </React.Fragment>
+            ))}
+          </div>
+        </div>
+      );
+      return;
+    }
+
     elements.push(
       <p
         key={i}
         className="text-[15.5px] mb-6"
         style={{ lineHeight: 1.8, color: "var(--ink)" }}
       >
-        {renderInline(block)}
+        {lines.map((line, k) => (
+          <React.Fragment key={k}>
+            {renderInline(line)}
+            {k < lines.length - 1 && <br />}
+          </React.Fragment>
+        ))}
       </p>
     );
   });

@@ -63,7 +63,9 @@ export default async function PostPage({
         className="mb-10 pb-8"
         style={{ borderBottom: "1px solid var(--rule)" }}
       >
-        <div className="eyebrow mb-2">孙哥火星殖民计划</div>
+        <div className="eyebrow mb-2">
+          {post!.format === "essay" ? "随笔" : "孙哥火星殖民计划"}
+        </div>
         <h1
           className="font-serif"
           style={{ fontSize: 34, fontWeight: 400, lineHeight: 1.25, margin: "8px 0 12px" }}
@@ -77,7 +79,7 @@ export default async function PostPage({
       {post!.audio && (
         <AudioPlayer src={post!.audio} duration={post!.audioDuration} />
       )}
-      <InterviewBody markdown={post!.content} />
+      <InterviewBody markdown={post!.content} format={post!.format} />
       <div className="mt-16">
         <Subscribe podcastQr={post!.podcastQr} podcastUrl={post!.podcastUrl} />
       </div>

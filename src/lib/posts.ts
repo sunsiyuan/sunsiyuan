@@ -4,12 +4,15 @@ import matter from "gray-matter";
 
 const postsDirectory = path.join(process.cwd(), "src/content/posts");
 
+export type PostFormat = "interview" | "essay";
+
 export type PostMeta = {
   slug: string;
   title: string;
   date: string;
   description: string;
   tags: string[];
+  format: PostFormat;
   audio?: string;
   audioDuration?: string;
   podcastQr?: string;
@@ -32,12 +35,21 @@ export function getPostBySlug(slug: string): Post {
   const fileContents = fs.readFileSync(fullPath, "utf8");
   const { data, content } = matter(fileContents);
 
+  const format = data.format;
+  if (format !== "interview" && format !== "essay") {
+    throw new Error(
+      `Post "${slug}" is missing required frontmatter \`format\`. ` +
+        `Add \`format: "interview"\` (podcast transcript) or \`format: "essay"\` (随笔).`
+    );
+  }
+
   return {
     slug,
     title: data.title ?? slug,
     date: data.date ?? "",
     description: data.description ?? "",
     tags: data.tags ?? [],
+    format,
     audio: data.audio ?? undefined,
     audioDuration: data.audioDuration ?? undefined,
     podcastQr: data.podcastQr ?? undefined,
