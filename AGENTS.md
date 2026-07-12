@@ -63,7 +63,20 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - 小宇宙等播客平台的CDN链接可能带生命周期过期时间（实测小宇宙的`media.xyzcdn.net`链接header里有`x-oss-expiration`，大概两个月后过期），拿来做站内永久播放器的音源不安全
 - 上传方法：`vercel blob put <本地文件路径> --pathname "audio/<slug>.mp3" --rw-token "$BLOB_READ_WRITE_TOKEN" --access public`（`BLOB_READ_WRITE_TOKEN`在`.env.local`里，是链接Blob store之后自动写入的）。Blob store（`sunsiyuan-media`）已经创建并链接到这个Vercel项目，不需要重新建。
 
-**播客平台关注卡片**：`Subscribe`组件（`src/components/Subscribe.tsx`）支持一个可选的`podcastQr`/`podcastUrl`prop，跟已有的微信公众号二维码卡片并排展示（`QrCard`是两者共用的展示组件）。截图/分享图不要直接整张嵌进去用——2026-07-06踩过坑，小宇宙的分享卡片是渐变紫蓝+插画风格，跟站点的暖纸极简风格"格格不入"，正确做法是从分享图里裁出纯二维码部分（用`PIL`按非白像素做tight bounding box，再按目标尺寸配上跟现有二维码同比例的留白，不要凭感觉裁——两张二维码在同一尺寸下视觉密度不一致会很明显），用站点自己的排版包一层。
+**播客平台关注卡片**：`Subscribe`组件（`src/components/Subscribe.tsx`）支持一个可选的`podcastQr`/`podcastUrl`prop，跟已有的微信公众号二维码卡片并排展示（`QrCard`是两者共用的展示组件）。
+
+**二维码直接用单集链接生成，不要去裁小宇宙的分享图**（2026-07-13 定，取代了原来那套裁图方案）：
+
+```python
+import qrcode
+q = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_M, box_size=10, border=2)
+q.add_data("https://www.xiaoyuzhoufm.com/episode/<id>"); q.make(fit=True)
+q.make_image(fill_color="#1c1b18", back_color="#f8f6f0").save("public/<slug>-xiaoyuzhou-qr.png")
+```
+
+配色直接用站点的`--ink`/`--paper-raised`，出来就是暖纸风格，不需要额外排版包装。
+
+原来的做法是从小宇宙分享图里用`PIL`裁出二维码部分——那是因为当时只有分享图。裁图有两个麻烦：分享图是渐变紫蓝+插画风，跟站点风格冲突；而且不同期裁出来的二维码密度/留白不一致，并排放很明显。**用链接重新生成从根上避免了这两点**，两期的二维码现在完全一致（naval-ep1 那张也已经用同一个脚本重新生成过）。
 
 ---
 
