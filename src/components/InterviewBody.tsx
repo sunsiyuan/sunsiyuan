@@ -198,6 +198,46 @@ export default function InterviewBody({
       return;
     }
 
+    // Standalone image block: `![alt](src)` on its own line → <figure>.
+    // alt text (if present) doubles as the centered caption below the image.
+    {
+      const imgMatch = block.match(/^!\[([^\]]*)\]\(([^)]+)\)$/);
+      if (imgMatch) {
+        flush(`flush-${i}`);
+        const [, alt, src] = imgMatch;
+        elements.push(
+          <figure key={i} style={{ margin: "28px 0" }}>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={src}
+              alt={alt}
+              style={{
+                display: "block",
+                width: "100%",
+                height: "auto",
+                borderRadius: 8,
+                border: "1px solid var(--rule)",
+              }}
+            />
+            {alt && (
+              <figcaption
+                style={{
+                  marginTop: 10,
+                  textAlign: "center",
+                  fontSize: 12.5,
+                  lineHeight: 1.6,
+                  color: "var(--ink-faint)",
+                }}
+              >
+                {renderInline(alt)}
+              </figcaption>
+            )}
+          </figure>
+        );
+        return;
+      }
+    }
+
     if (block.startsWith("## ")) {
       flush(`flush-${i}`);
       const raw = block.replace(/^##\s*/, "");
