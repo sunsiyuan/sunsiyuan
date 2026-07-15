@@ -75,6 +75,23 @@ def render(md_text):
             )
             continue
 
+        # 独占一行的图片 ![alt](src) → 居中 figure + 图注（src 用线上绝对地址）
+        m_img = re.match(r"^!\[([^\]]*)\]\(([^)]+)\)$", block)
+        if m_img:
+            alt, src = m_img.group(1), m_img.group(2)
+            cap = (
+                f'<figcaption style="margin-top:10px;text-align:center;font-size:12.5px;'
+                f'line-height:1.6;color:{INK_FAINT};">{render_inline(alt)}</figcaption>'
+                if alt else ""
+            )
+            out.append(
+                f'<figure style="margin:26px 0;">'
+                f'<img src="{html.escape(src, quote=True)}" alt="{html.escape(alt, quote=True)}" '
+                f'style="display:block;width:100%;height:auto;border-radius:8px;'
+                f'border:1px solid {RULE};" />{cap}</figure>'
+            )
+            continue
+
         rows = [l.strip() for l in lines if l.strip()]
         is_ul = len(rows) >= 1 and all(re.match(r"^[-*]\s+", l) for l in rows)
         is_ol = len(rows) >= 2 and all(re.match(r"^\d+[.、]?\s+", l) for l in rows)
