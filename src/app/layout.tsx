@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 import Script from "next/script";
+import { Analytics } from "@vercel/analytics/next";
 import ThemeToggle from "@/components/ThemeToggle";
 import {
   SITE_URL,
@@ -129,6 +130,7 @@ export default function RootLayout({
           strategy="afterInteractive"
           data-cf-beacon='{"token": "0cb386a70734487e94138b96e63a38ef"}'
         />
+        <Analytics />
       </body>
     </html>
   );
